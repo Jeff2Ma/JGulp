@@ -1,20 +1,27 @@
-/* global require */
 var lr         = require('tiny-lr'),
     gulp       = require('gulp'),
     compass    = require('gulp-compass'),
     livereload = require('gulp-livereload'),
-    server     = lr();
+    server     = lr(),
+    uglify = require('gulp-uglify'),
+    plumber = require('gulp-plumber'),
+    webserver = require('gulp-webserver'),
+    opn       = require('opn');
 
-var plumber = require('gulp-plumber');
-var webserver = require('gulp-webserver');
-var opn       = require('opn');
-
+//配置本地Web 服务器：主机+端口
 var localserver = {
   host: 'localhost',
   port: '8001'
 }
 
+//压缩javascript 文件   
+gulp.task('minifyjs',function(){
+    gulp.src('js/*.js')
+    .pipe(uglify())
+    .pipe(gulp.dest('js/min'))
+});
 
+//开启本地 Web 服务器功能
 gulp.task('webserver', function() {
   gulp.src( './' )
     .pipe(webserver({
@@ -25,11 +32,12 @@ gulp.task('webserver', function() {
     }));
 });
 
+//通过浏览器打开本地 Web服务器 路径
 gulp.task('openbrowser', function() {
   opn( 'http://' + localserver.host + ':' + localserver.port );
 });
 
-
+//Compass 进行SASS 代码
 gulp.task('compass', function() {
   gulp.src('./sass/*.scss')
     .pipe(plumber())
@@ -38,9 +46,7 @@ gulp.task('compass', function() {
     }));
 });
 
-
- 
- 
+//文件监控
 gulp.task('watch', function () {
 
   server.listen(35729, function (err) {
@@ -62,15 +68,18 @@ gulp.task('watch', function () {
   });
  
 });
- 
-gulp.task('default', function(){
-  
-  gulp.run('compass');
- 
-  gulp.run('watch');
-  
-  gulp.run('webserver');
 
+//默认任务
+gulp.task('default', function(){
+  console.log('Starting Gulp tasks, enjoy coding!');
+  gulp.run('compass');
+  gulp.run('watch');
+  gulp.run('webserver');
   gulp.run('openbrowser');
- 
+});
+
+//项目完成提交任务
+gulp.task('build', function(){
+  gulp.run('compass');
+  gulp.run('minifyjs');
 });
