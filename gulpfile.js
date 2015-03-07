@@ -3,10 +3,18 @@ var lr         = require('tiny-lr'),
     compass    = require('gulp-compass'),
     livereload = require('gulp-livereload'),
     server     = lr(),
-    uglify = require('gulp-uglify'),
-    plumber = require('gulp-plumber'),
-    webserver = require('gulp-webserver'),
-    opn       = require('opn');
+    uglify     = require('gulp-uglify'),
+    plumber    = require('gulp-plumber'),
+    webserver  = require('gulp-webserver'),
+    opn        = require('opn'),
+    concat     = require('gulp-concat'),
+    clean      = require('gulp-clean'),
+    imagemin   = require('gulp-imagemin'),
+    pngquant   = require('imagemin-pngquant'),
+    rename     = require("gulp-rename"),
+    zip        = require('gulp-zip'),
+    copy       = require("gulp-copy");
+
 
 //配置本地Web 服务器：主机+端口
 var localserver = {
@@ -14,11 +22,25 @@ var localserver = {
   port: '8001'
 }
 
-//压缩javascript 文件   
+//压缩javascript 文件，压缩后文件放入build/js下   
 gulp.task('minifyjs',function(){
     gulp.src('js/*.js')
     .pipe(uglify())
-    .pipe(gulp.dest('js/min'))
+    .pipe(gulp.dest('./js/min'))
+});
+
+//合并build/js文件夹下的所有javascript 文件为一个main.js放入build/js下   
+gulp.task('alljs', function() {
+  return gulp.src('./build/js/*.js')
+    .pipe(concat('main.min.js'))
+    .pipe(gulp.dest('./js/min'));
+});
+
+//重命名project.md 文件
+gulp.task('rename', function() {
+  return gulp.src("./Project.md")
+      .pipe(rename("README.md"))
+      .pipe(gulp.dest("./build")); 
 });
 
 //开启本地 Web 服务器功能
@@ -46,6 +68,37 @@ gulp.task('compass', function() {
     }));
 });
 
+//多余文件删除
+gulp.task('clean', function () {
+    return gulp.src('./.sass-cache')
+        .pipe(clean({force: true}))
+        .pipe(gulp.dest('./clean'));
+});
+
+//压缩图片
+gulp.task('imagemin', function () {
+    return gulp.src('images/*')
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest('./build/images'));
+});
+
+//将相关项目文件复制到build 文件夹下
+gulp.task('buildfiles', function() {
+   //根目录文件
+   gulp.src('./*.{php,html,css,png}')
+   .pipe(gulp.dest('./build'));
+   //CSS文件
+   gulp.src('./css/*')
+   .pipe(gulp.dest('./build/css'));
+    //压缩后的js文件
+   gulp.src('./js/min/*')
+   .pipe(gulp.dest('./build/js'));
+});
+
 //文件监控
 gulp.task('watch', function () {
 
@@ -55,11 +108,16 @@ gulp.task('watch', function () {
     }
   });
  
-  gulp.watch('./sass/*.scss', function () {
+  gulp.watch('./sass/*.scss', function (e) {
     gulp.run('compass');
+    server.changed({
+      body: {
+        files: [e.path]
+      }
+    });
   });
  
-  gulp.watch(['./css/*.css','./*.html'],  function (e) {
+  gulp.watch(['./sass/*.scss','./*.html','./*.php','./*.css','./js/*.js'],  function (e) {
     server.changed({
       body: {
         files: [e.path]
@@ -80,6 +138,32 @@ gulp.task('default', function(){
 
 //项目完成提交任务
 gulp.task('build', function(){
+  gulp.run('imagemin');
   gulp.run('compass');
   gulp.run('minifyjs');
+  gulp.run('alljs');
+  gulp.run('buildfiles');
+  gulp.run('rename');
+  //gulp.run('clean');
+});
+
+//打包主体build 文件夹并按照时间重命名
+gulp.task('zip', function(){
+      function checkTime(i) {
+          if (i < 10) {
+              i = "0" + i
+          }
+          return i
+      }
+          
+      var d=new Date();
+      var year=d.getFullYear();
+      var month=checkTime(d.getMonth() + 1);
+      var day=checkTime(d.getDate());
+      var hour=checkTime(d.getHours());
+      var minute=checkTime(d.getMinutes());
+
+  return gulp.src('./build/**')
+        .pipe(zip('build-'+year+month+day +hour+minute+'.zip'))
+        .pipe(gulp.dest('./'));
 });
