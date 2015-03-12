@@ -1,8 +1,11 @@
 
-# 利用Gulp 配置的前端项目自动化工作流
+# JGulp:利用Gulp 配置的前端项目自动化工作流
 ====
 
-> 这个是本人利用Gulp 配置的适合自己的一个前端项目自动化工作流，目前正在实践运用中（通俗说用得还挺爽）。如果你有需要，可以参考本工作量构建适合自己的工作流。跪求Star，欢迎Fork！
+> JGulp 是本人利用Gulp 配置的适合自己的一个前端项目自动化工作流，目前正在实践运用中（通俗说用得还挺爽）。如果你有需要，可以参考本工作量构建适合自己的工作流。跪求Star，欢迎Fork！
+
+> 文章介绍：http://devework.com/jgulp.html
+
 
 ## 功能模块（插件）
 
@@ -64,9 +67,9 @@ Sass 是与 Less 并举的 CSS 预处理器，一种全新的CSS 编码方式。
 
 2. 进入你的项目文件夹下`clone` 本 git 项目
 
-		$ git clone https://github.com/Jeff2Ma/Gulp-Project.git
+		$ git clone https://github.com/Jeff2Ma/JGulp.git
 		
-3. 按照个人的项目需求，重命名`gulp-project` 文件夹为你自己的项目英文名称，填写`Project.md `文件（`Project.md`文件在项目最终打包的时候会自动重命名为`README.md`保存在`build` 文件夹），填写`package.json` 文件的项目名称部分。如果需要进一步的个性化，可以编辑`gulpfile.js` 文件。
+3. 按照个人的项目需求，重命名`JGulp` 文件夹为你自己的项目英文名称，填写`Project.md `文件（`Project.md`文件在项目最终打包的时候会自动重命名为`README.md`保存在`build` 文件夹），填写`package.json` 文件的项目名称部分。如果需要进一步的个性化，可以编辑`gulpfile.js` 文件。
 		
 4. 然后捏，就基本上可以的了，默认任务：
 
