@@ -35,6 +35,8 @@ Sass 是与 Less 并举的 CSS 预处理器，一种全新的CSS 编码方式。
 
 经过实际使用发现，图片压缩略有损失，但基本无碍。
 
+2015.04.06更新：添加Tinypng 的无损压缩，后续通过 `gulp build2` 命令即可自动调用。
+
 - 文件清理功能（gulp-clean）
 
 在项目完成可以删除一些多余的文件
@@ -68,6 +70,10 @@ Sass 是与 Less 并举的 CSS 预处理器，一种全新的CSS 编码方式。
 2. 进入你的项目文件夹下`clone` 本 git 项目
 
 		$ git clone https://github.com/Jeff2Ma/JGulp.git
+
+   `clone` 后建议删除残留的`.git` 缓存文件夹，方便添加自己的Git 版本信息管理：
+   
+  		rm -rf .git  
 		
 3. 按照个人的项目需求，重命名`JGulp` 文件夹为你自己的项目英文名称，填写`Project.md `文件（`Project.md`文件在项目最终打包的时候会自动重命名为`README.md`保存在`build` 文件夹），填写`package.json` 文件的项目名称部分。如果需要进一步的个性化，可以编辑`gulpfile.js` 文件。
 		
@@ -78,6 +84,10 @@ Sass 是与 Less 并举的 CSS 预处理器，一种全新的CSS 编码方式。
 5. 如果项目已经完成，可以通过`build` 命令进行项目相关文件收集，项目文件最终会汇集到项目目录下的`build` 文件夹中方面进一步操作
 
 		$ gulp build
+
+	2015.04.06更新：因为添加了Tinypng 的图片压缩，如果需要调用的是该种形式的压缩，命令需改为：
+
+		$ gulp build2
 
 6. 打包`build` 文件夹下的项目文件，会自动生成`build-xxxx.zip` 的文件（`xxxx` 为打包时候的时间）供交付使用或进行下一阶段的开发
 

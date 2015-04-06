@@ -13,7 +13,8 @@ var lr         = require('tiny-lr'),
     pngquant   = require('imagemin-pngquant'),
     rename     = require("gulp-rename"),
     zip        = require('gulp-zip'),
-    copy       = require("gulp-copy");
+    copy       = require("gulp-copy"),
+    tinypng    = require('gulp-tinypng');
 
 
 //配置本地Web 服务器：主机+端口
@@ -86,6 +87,13 @@ gulp.task('imagemin', function () {
         .pipe(gulp.dest('./build/images'));
 });
 
+//压缩图片 - tinypng
+gulp.task('tinypng', function () {
+    gulp.src('images/*.{png,jpg,jpeg}')
+        .pipe(tinypng('TXLweO1Lvlxnq9-Yg4sDg0WKnPlHls3d'))
+        .pipe(gulp.dest('./build/images'));
+});
+
 //将相关项目文件复制到build 文件夹下
 gulp.task('buildfiles', function() {
    //根目录文件
@@ -139,6 +147,17 @@ gulp.task('default', function(){
 //项目完成提交任务
 gulp.task('build', function(){
   gulp.run('imagemin');
+  gulp.run('compass');
+  gulp.run('minifyjs');
+  gulp.run('alljs');
+  gulp.run('buildfiles');
+  gulp.run('rename');
+  //gulp.run('clean');
+});
+
+//项目完成提交任务
+gulp.task('build2', function(){
+  gulp.run('tinypng');
   gulp.run('compass');
   gulp.run('minifyjs');
   gulp.run('alljs');
