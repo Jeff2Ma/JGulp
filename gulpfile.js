@@ -1,8 +1,8 @@
 var lr         = require('tiny-lr'),
+    server     = lr(),
     gulp       = require('gulp'),
     compass    = require('gulp-compass'),
     livereload = require('gulp-livereload'),
-    server     = lr(),
     uglify     = require('gulp-uglify'),
     plumber    = require('gulp-plumber'),
     webserver  = require('gulp-webserver'),
@@ -14,8 +14,9 @@ var lr         = require('tiny-lr'),
     rename     = require("gulp-rename"),
     zip        = require('gulp-zip'),
     copy       = require("gulp-copy"),
-    tinypng    = require('gulp-tinypng');
-
+    tinypng    = require('gulp-tinypng'),
+    sftp       = require('gulp-sftp'),
+    config     = require('./config.json');
 
 //配置本地Web 服务器：主机+端口
 var localserver = {
@@ -90,7 +91,7 @@ gulp.task('imagemin', function () {
 //压缩图片 - tinypng
 gulp.task('tinypng', function () {
     gulp.src('images/*.{png,jpg,jpeg}')
-        .pipe(tinypng('TXLweO1Lvlxnq9-Yg4sDg0WKnPlHls3d'))
+        .pipe(tinypng(config.tinypngapi))
         .pipe(gulp.dest('./build/images'));
 });
 
@@ -185,4 +186,16 @@ gulp.task('zip', function(){
   return gulp.src('./build/**')
         .pipe(zip('build-'+year+month+day +hour+minute+'.zip'))
         .pipe(gulp.dest('./'));
+});
+
+//上传到远程服务器任务
+gulp.task('upload', function () {
+    return gulp.src('./build/**')
+        .pipe(sftp({
+            host: config.sftp.host,
+            user: config.sftp.user,
+            port: config.sftp.port,
+            key: config.sftp.key,
+            remotePath: config.sftp.remotePath
+        }));
 });
