@@ -18,12 +18,6 @@ var lr         = require('tiny-lr'),
     sftp       = require('gulp-sftp'),
     config     = require('./config.json');
 
-//配置本地Web 服务器：主机+端口
-var localserver = {
-  host: 'localhost',
-  port: '8001'
-}
-
 //压缩javascript 文件，压缩后文件放入build/js下   
 gulp.task('minifyjs',function(){
     gulp.src('js/*.js')
@@ -49,8 +43,8 @@ gulp.task('rename', function() {
 gulp.task('webserver', function() {
   gulp.src( './' )
     .pipe(webserver({
-      host:             localserver.host,
-      port:             localserver.port,
+      host:             config.localserver.host,
+      port:             config.localserver.port,
       livereload:       true,
       directoryListing: false
     }));
@@ -58,7 +52,7 @@ gulp.task('webserver', function() {
 
 //通过浏览器打开本地 Web服务器 路径
 gulp.task('openbrowser', function() {
-  opn( 'http://' + localserver.host + ':' + localserver.port );
+  opn( 'http://' + config.localserver.host + ':' + config.localserver.port );
 });
 
 //Compass 进行SASS 代码
@@ -184,7 +178,7 @@ gulp.task('zip', function(){
       var minute=checkTime(d.getMinutes());
 
   return gulp.src('./build/**')
-        .pipe(zip('build-'+year+month+day +hour+minute+'.zip'))
+        .pipe(zip( config.project+'-'+year+month+day +hour+minute+'.zip'))
         .pipe(gulp.dest('./'));
 });
 
